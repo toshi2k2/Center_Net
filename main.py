@@ -72,14 +72,16 @@ def main():
     ######################################################################################################################
     """Dataset loading"""
 
-    path = opt.dataroot
-    names = ['x', 'a', 'b', 'y']
-    df = pd.read_csv(f'{path}.csv', header=None, names=names)
+    tensor_data = torch.from_numpy(data)  # need to edit this
+    tensor_data = tensor_data.float()
+    tensor_target = torch.from_numpy(target)
 
-    print("data shape:", df.shape)
+    loaderD = data_utils.TensorDataset(tensor_data, tensor_target)
+    dataloader = data_utils.DataLoader(loaderD, batch_size=batch_size, shuffle=True)
 
-    X, Y = df
-    # df.head()
+    loaderT = data_utils.TensorDataset(tensor_test_data, tensor_test_target)
+    testloader = data_utils.DataLoader(loaderT, batch_size=batch_size, shuffle=True)
+
     #######################################################################################################################
 
     """Hyperparameters"""
