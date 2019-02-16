@@ -27,7 +27,7 @@ def _train(opt, net, criterion, dataloader, testloader, N=40000):
             os.makedirs(opt.outf)
         except OSError:
             pass
-        result = './' + opt.dataset
+        result = './'
         os.makedirs(opt.outf + result)
         os.makedirs(opt.outf + result + '/saved_models')
     except OSError:
@@ -38,7 +38,7 @@ def _train(opt, net, criterion, dataloader, testloader, N=40000):
         criterion.cuda()
 
     # setup optimizer
-    optimizer = optim.Adam(net.parameters(), lr=opt.lr, betas=opt.beta)
+    optimizer = optim.Adam(net.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
     print("Starting training...\n")
 
     for epoch in range(opt.niter):

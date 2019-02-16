@@ -12,9 +12,9 @@ import torch.nn as nn
 import pandas as pd
 # import torch.legacy.nn as lnn
 # import torch.nn.parallel
-# import torch.backends.cudnn as cudnn
+import torch.backends.cudnn as cudnn
 import torch.optim as optim
-import torch.utils.data
+import torch.utils.data as vdata
 from torch.utils.data import Dataset, DataLoader
 # import torchvision.datasets as dset
 import torchvision.transforms as transforms
@@ -43,7 +43,7 @@ def main():
     parser.add_argument('--niter', type=int, default=60, help='number of epochs to train for')
     parser.add_argument('--saveInt', type=int, default=14, help='number of epochs between checkpoints')
     parser.add_argument('--lr', type=float, default=0.001, help='learning rate')
-    parser.add_argument('--beta', type=float, default=0.5, help='beta1 for adam. default=0.5')
+    parser.add_argument('--beta1', type=float, default=0.5, help='beta1 for adam. default=0.5')
     parser.add_argument('--cuda', action='store_true', help='enables cuda')
     parser.add_argument('--ngpu', type=int, default=1, help='number of GPUs to use')
     parser.add_argument('--outf', default='output', help='folder to output images and model checkpoints')
@@ -72,15 +72,14 @@ def main():
     ######################################################################################################################
     """Dataset loading"""
 
-    tensor_data = torch.from_numpy(data)  # need to edit this
-    tensor_data = tensor_data.float()
-    tensor_target = torch.from_numpy(target)
+    my_x = [np.array([[1.0, 2], [3, 4]]), np.array([[5., 6], [7, 8]])]  # a list of numpy arrays
+    my_y = [0, 1]  # another list of numpy arrays (targets)
 
-    loaderD = data_utils.TensorDataset(tensor_data, tensor_target)
-    dataloader = data_utils.DataLoader(loaderD, batch_size=batch_size, shuffle=True)
+    tensor_x = torch.stack([torch.Tensor(i) for i in my_x])  # transform to torch tensors
+    tensor_y = torch.Tensor(my_y)
 
-    loaderT = data_utils.TensorDataset(tensor_test_data, tensor_test_target)
-    testloader = data_utils.DataLoader(loaderT, batch_size=batch_size, shuffle=True)
+    my_dataset = vdata.TensorDataset(tensor_x, tensor_y)  # create your datset
+    dataloader = DataLoader(my_dataset)  # create your dataloader
 
     #######################################################################################################################
 
@@ -98,7 +97,7 @@ def main():
     # criterion = nn.MSELoss()  # one-hot in train
     criterion = nn.CrossEntropyLoss()  # remove one-hot in train
 
-    _train(opt=opt, net=net, criterion=criterion, dataloader=dataloader, testloader=testloader)
+    _train(opt=opt, net=net, criterion=criterion, dataloader=dataloader, testloader=None)
 
 
 if __name__ == '__main__':
