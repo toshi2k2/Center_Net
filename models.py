@@ -53,14 +53,14 @@ class Net(nn.Module):
 
         self.g = nn.GRU(self.hidden_size * self.idx, self.hidden_size * self.idx, self.n_layers, dropout=0.01)
 
-        self.main2.add_module('output-linear1', nn.Linear(self.hidden_size * self.idx, 1))
+        self.main2.add_module('output-linear1', nn.Linear(self.hidden_size * self.idx, 2))
         #         self.main2.add_module('output-relu', nn.LeakyReLU(0.1, inplace=True))
         #         self.main2.add_module('output-linear1', nn.Linear(self.output_size, 1))
         self.main2.add_module('output-sigmoid', nn.Sigmoid())
 
     def forward(self, inputs, hidden=None):
         # batch_size = inputs.size(1)
-
+        # print(inputs.shape)
         p = self.main(inputs)
         #         print(p.shape)
 

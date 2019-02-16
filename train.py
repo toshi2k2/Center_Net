@@ -20,16 +20,14 @@ import torch.nn.functional as F
 from torch.distributions.normal import Normal
 
 
-def _train(opt, net, criterion, dataloader, testloader, N=40000):
+def _train(opt, net, criterion, dataloader, testloader, N=1000):
     # device = torch.device("cuda" if opt.cuda else "cpu")
     try:
         try:
             os.makedirs(opt.outf)
         except OSError:
             pass
-        result = './'
-        os.makedirs(opt.outf + result)
-        os.makedirs(opt.outf + result + '/saved_models')
+        os.makedirs(opt.outf + '/saved_models')
     except OSError:
         pass
 
@@ -54,8 +52,12 @@ def _train(opt, net, criterion, dataloader, testloader, N=40000):
             if opt.cuda:
                 input, label = input.cuda(), label.cuda()
             # batch_size = real_cpu.size(0)
+            label = label.long()
+            # print(type(label), len(label))
 
             output = net(input)
+            # print(output.shape, output, label)
+            output = output.squeeze()
             loss = criterion(output, label)
 
             loss.backward()
@@ -68,7 +70,7 @@ def _train(opt, net, criterion, dataloader, testloader, N=40000):
                       % (epoch + 1, opt.niter, i + 1, N // opt.batchSize, loss_data))
 
                 if (epoch + 1) % opt.saveInt == 0 and epoch != 0:
-                    torch.save(net.state_dict(), '%s/net_epoch_%d.pth' % (opt.outf+'/'+opt.dataset+'/saved_models', epoch+1))
+                    torch.save(net.state_dict(), '%s/net_epoch_%d.pth' % (opt.outf+'/saved_models', epoch+1))
 
                 ##printing train statistics:
                 # Test the Model
@@ -108,11 +110,4 @@ def _train(opt, net, criterion, dataloader, testloader, N=40000):
                     correct += (predicted.float() == labels.float()).sum()
 
                 print('Accuracy of the network on the 10000 test images: %d %%' % (100 * correct / total))
-
-                yes_adj = (net.adj_net >= 0.9).float().sum().cpu().data.numpy() / opt.netSize ** 2
-                no_adj = (net.adj_net <= 0.1).float().sum().cpu().data.numpy() / opt.netSize ** 2
-                print('% greater than 0.9:', yes_adj)
-                print('% less than 0.1:', no_adj)
-                print('Sum:', yes_adj + no_adj)
-
 

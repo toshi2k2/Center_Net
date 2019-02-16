@@ -49,7 +49,7 @@ def main():
     parser.add_argument('--outf', default='output', help='folder to output images and model checkpoints')
     parser.add_argument('--manualSeed', type=int, help='manual seed')
     parser.add_argument('--net', default='', help="path to net (to continue training)")
-    parser.add_argument('--nc', default=2, help="number of channels")
+    parser.add_argument('--nc', default=2, help="number of channels", type=int)
 
     opt = parser.parse_args()
     print(opt)
@@ -72,14 +72,29 @@ def main():
     ######################################################################################################################
     """Dataset loading"""
 
-    my_x = [np.array([[1.0, 2], [3, 4]]), np.array([[5., 6], [7, 8]])]  # a list of numpy arrays
-    my_y = [0, 1]  # another list of numpy arrays (targets)
+    my_x = []  # a list of numpy arrays
+    for _ in range(1000):
+        my_x.append(np.random.rand(12, 128))
+    my_y = list(np.random.randint(2, size=1000))  # another list of numpy arrays (targets)
+    # print(type(my_y))
 
     tensor_x = torch.stack([torch.Tensor(i) for i in my_x])  # transform to torch tensors
     tensor_y = torch.Tensor(my_y)
 
     my_dataset = vdata.TensorDataset(tensor_x, tensor_y)  # create your datset
-    dataloader = DataLoader(my_dataset)  # create your dataloader
+    dataloader = DataLoader(my_dataset, batch_size=opt.batchSize, drop_last=True)  # create your dataloader
+
+    test_x = []  # a list of numpy arrays
+    for _ in range(100):
+        test_x.append(np.random.rand(12, 128))
+    test_y = list(np.random.randint(2, size=100))  # another list of numpy arrays (targets)
+    # print(type(my_y))
+
+    tensor_test_x = torch.stack([torch.Tensor(i) for i in test_x])  # transform to torch tensors
+    tensor_test_y = torch.Tensor(test_y)
+
+    tataset = vdata.TensorDataset(tensor_test_x, tensor_test_y)  # create your datset
+    testloader = DataLoader(tataset, batch_size=opt.batchSize, drop_last=True)  # create your dataloader
 
     #######################################################################################################################
 
@@ -90,6 +105,8 @@ def main():
     net = Net(insize=opt.len, output_size=128, nc=opt.nc, hidden_size=64, n_layers=2)
     net.apply(weights_init)
 
+    print(net)
+
     if opt.net != '':
         net.load_state_dict(torch.load(opt.net))
     # print(net)
@@ -97,7 +114,7 @@ def main():
     # criterion = nn.MSELoss()  # one-hot in train
     criterion = nn.CrossEntropyLoss()  # remove one-hot in train
 
-    _train(opt=opt, net=net, criterion=criterion, dataloader=dataloader, testloader=None)
+    _train(opt=opt, net=net, criterion=criterion, dataloader=dataloader, testloader=testloader)
 
 
 if __name__ == '__main__':
