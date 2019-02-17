@@ -42,13 +42,14 @@ def focusClient(clientsocket):
     while True:
         if ready == True:
             dataframe = np.concatenate([alpha_absolute, beta_absolute, delta_absolute, gamma_absolute, theta_absolute], axis=1)
+            dataframe[dataframe == -np.inf] = 0
+            dataframe = [j for i in dataframe for j in i]
             data = pickle.dump(dataframe)
             clientsocket.send(data.encode())
-            prediction = clientsocket.recv().decode()
-            if prediction == 1:
-                pass
-            if prediction == 0:
-                print("You don't seem to be concentrating! Stay focused! ")
+            print("A data frame sent. ")
+            prediction = clientsocket.recv(1024).decode()
+            if prediction < 0.4:
+                print("You don't seem to be concentrating! Stay focused! Focusing score: {}%".format(prediction*100))
             ready = False
 
 if __name__ == "__main__":
