@@ -39,7 +39,7 @@ def main():
     parser.add_argument('--dataroot', required=False, help='path to dataset', default='./data/data.csv')
     parser.add_argument('--workers', type=int, help='number of data loading workers', default=6)
     parser.add_argument('--batchSize', type=int, default=32, help='input batch size')
-    parser.add_argument('--len', type=int, default=256, help='the height / width of the input image to network')
+    parser.add_argument('--len', type=int, default=256, help='the height / width of the input to network')
     parser.add_argument('--niter', type=int, default=60, help='number of epochs to train for')
     parser.add_argument('--saveInt', type=int, default=14, help='number of epochs between checkpoints')
     parser.add_argument('--lr', type=float, default=0.001, help='learning rate')
