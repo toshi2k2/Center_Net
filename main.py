@@ -72,17 +72,28 @@ def main():
     ######################################################################################################################
     """Dataset loading"""
 
-    my_x = []  # a list of numpy arrays
-    for _ in range(1000):
-        my_x.append(np.random.rand(12, 128))
-    my_y = list(np.random.randint(2, size=1000))  # another list of numpy arrays (targets)
+    with open('./data/train_data.pkl', 'rb') as f:
+        train_x = pickle.load(f)
+
+    with open('./data/train_label.pkl', 'rb') as f:
+        train_y = pickle.load(f)
+
+    with open('./data/teet_data.pkl', 'rb') as f:
+        train_x = pickle.load(f)
+
+    with open('./data/train_label.pkl', 'rb') as f:
+        train_y = pickle.load(f)
+    # train_x = []  # a list of numpy arrays
+    # for _ in range(1000):
+    #     train_x.append(np.random.rand(12, 128))
+    # train_y = list(np.random.randint(2, size=1000))  # another list of numpy arrays (targets)
     # print(type(my_y))
 
-    tensor_x = torch.stack([torch.Tensor(i) for i in my_x])  # transform to torch tensors
-    tensor_y = torch.Tensor(my_y)
+    tensor_x = torch.stack([torch.Tensor(i) for i in train_x])  # transform to torch tensors
+    tensor_y = torch.Tensor(train_y)
 
     my_dataset = vdata.TensorDataset(tensor_x, tensor_y)  # create your datset
-    dataloader = DataLoader(my_dataset, batch_size=opt.batchSize, drop_last=True)  # create your dataloader
+    dataloader = DataLoader(my_dataset, batch_size=opt.batchSize, drop_last=True, shuffle=True)  # create your dataloader
 
     test_x = []  # a list of numpy arrays
     for _ in range(100):
