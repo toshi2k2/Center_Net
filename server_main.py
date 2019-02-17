@@ -1,8 +1,8 @@
 from __future__ import print_function
 
 from models import Net
-from server_predict import _test
-from utils import weights_init
+# from server_predict import _test
+# from utils import weights_init
 
 import argparse
 import random
@@ -43,6 +43,10 @@ def main():
 
     opt = parser.parse_args()
 
+    with open("FocusMuseDataset_mean_std.pkl", "rb") as f:
+        mean = pickle.load(f)
+        std = pickle.load(f)
+
     ######################################################################################################################
 
     if opt.manualSeed is None:
@@ -65,7 +69,8 @@ def main():
     PORT = 65531
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((HOST, PORT))
-    s.listen(1)
+    print("binding")
+    s.listen(5)
     conn, addr = s.accept()
     print('Connected by', addr)
 
@@ -74,27 +79,45 @@ def main():
         if not data:
             break
         test_x = pickle.load(data)
-        print("test data: ", type(test_x), len(test_x), test_x[0].size)
+        test_x = torch.Tensor(test_x)
+        print("test data: ", type(test_x), test_x.shape)
 
-        """Dataset loading"""
-        tensor_test_x = torch.stack([torch.Tensor(i) for i in test_x])  # transform to torch tensors
-
-        tataset = vdata.TensorDataset(tensor_test_x)  # create your datset
-        testloader = DataLoader(tataset, drop_last=False)  # create your dataloader
+        # """Dataset loading"""
+        # tensor_test_x = torch.stack([torch.Tensor(i) for i in test_x])  # transform to torch tensors
+        #
+        # dataset = vdata.TensorDataset(tensor_test_x)  # create your datset
+        # testloader = DataLoader(dataset, drop_last=False)  # create your dataloader
 
         #######################################################################################################################
 
         net = Net(insize=opt.len, output_size=128, nc=opt.nc, hidden_size=64, n_layers=2)
-        net.apply(weights_init)
+        # net.apply(weights_init)
 
         if opt.net != '':
             print("loading trained net...")
             net.load_state_dict(torch.load(opt.net))
         # print(net)
+        if opt.cuda:
+            net.cuda()
+            test_x.cuda()
 
-        ratio = _test(opt=opt, net=net, testloader=testloader)
+        # total, nonzero = 0, 0
 
-        conn.send(ratio)
+        test_x = Variable(test_x)
+        outputs = net(test_x)
+        predicted = torch.argmax(outputs, dim=1)
+        # if opt.cuda:
+        #     p2 = predicted.cpu().detach().numpy()
+        # else:
+        #     p2 = predicted.numpy()
+        # nonzero += np.count_nonzero(p2)
+        # total += p2.shape[0]
+        #
+        # ratio = ((total - nonzero) / total) * 100
+
+        # ratio = _test(opt=opt, net=net, testloader=testloader)
+
+        conn.send(outputs[predicted])
     conn.close()
 
     #######################################################################################################################
