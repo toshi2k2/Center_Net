@@ -94,7 +94,7 @@ def main():
     tensor_test_y = torch.Tensor(test_y)
 
     tataset = vdata.TensorDataset(tensor_test_x, tensor_test_y)  # create your datset
-    testloader = DataLoader(tataset, batch_size=opt.batchSize, drop_last=True)  # create your dataloader
+    testloader = DataLoader(tataset, batch_size=33, drop_last=True)  # create your dataloader
 
     #######################################################################################################################
 

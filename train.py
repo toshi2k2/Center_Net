@@ -109,5 +109,5 @@ def _train(opt, net, criterion, dataloader, testloader, N=1000):
                     total += labels.size(0)
                     correct += (predicted.float() == labels.float()).sum()
 
-                print('Accuracy of the network on the 10000 test images: %d %%' % (100 * correct / total))
+                print('Accuracy of the network on the test images: %d %%' % (100 * correct / total))
 
