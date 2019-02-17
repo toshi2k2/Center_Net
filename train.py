@@ -20,7 +20,7 @@ import torch.nn.functional as F
 from torch.distributions.normal import Normal
 
 
-def _train(opt, net, criterion, dataloader, testloader, N=1000):
+def _train(opt, net, criterion, dataloader, testloader, N=2400):
     # device = torch.device("cuda" if opt.cuda else "cpu")
     try:
         try:
@@ -45,6 +45,7 @@ def _train(opt, net, criterion, dataloader, testloader, N=1000):
         for i, (input, label) in enumerate(dataloader, 0):
             net.zero_grad()
             # print(label)
+            # print(input)
             # label = one_hot_embedding(label, opt.numClasses)  # one-hot encoding
             # print("one-hot: ", label)
             input = Variable(input)
@@ -53,14 +54,14 @@ def _train(opt, net, criterion, dataloader, testloader, N=1000):
                 input, label = input.cuda(), label.cuda()
             # batch_size = real_cpu.size(0)
             label = label.long()
-            # print(type(label), len(label))
 
             output = net(input)
             # print(output.shape, output, label)
+            # print(output)
             output = output.squeeze()
             loss = criterion(output, label)
 
-            loss.backward()
+            loss.backward(retain_graph=True)
             optimizer.step()
             ##printing statistics:
             if (i + 1) % np.floor(N / opt.batchSize) == 0:
@@ -84,6 +85,7 @@ def _train(opt, net, criterion, dataloader, testloader, N=1000):
                     # print(outputs.shape, output)
                     # _, predicted = torch.max(outputs.data, 1)
                     predicted = torch.argmax(outputs, dim=1)
+                    print("predicted :", predicted.cpu().detach().numpy().shape[0])
                     if epoch % 2 == 0:
                         pass
                         # print("labels: ", labels, "outputs: ", outputs, "predicted: ", predicted)
