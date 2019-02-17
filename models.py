@@ -40,7 +40,7 @@ class Net(nn.Module):
 
         # input is (nc) x 64 x 64
         self.main.add_module('input-conv', nn.Conv1d(nc, self.hidden_size, kernel_size=2, stride=2))
-        self.main.add_module('leaky-relu', nn.LeakyReLU(0.2, inplace=True))
+        self.main.add_module('relu', nn.LeakyReLU(0.1))
         self.main.add_module('dropout', nn.Dropout(0.2))
         # state size. (ndf) x 32 x 32
         for i in range(n - 6):
@@ -49,7 +49,8 @@ class Net(nn.Module):
                                                                             self.hidden_size * (i + 2), kernel_size=2,
                                                                             stride=2))
             self.main.add_module('pyramid{0}batchnorm'.format(i + 1), nn.BatchNorm1d(self.hidden_size * (i + 2)))
-            self.main.add_module('pyramid{0}relu'.format(i + 1), nn.LeakyReLU(0.1, inplace=True))
+            self.main.add_module('pyramid{0}relu'.format(i + 1), nn.LeakyReLU(0.2))
+            # self.main.add_module('pyramid{0}dropout'.format(i + 1), nn.Dropout(0.2))
 
         self.g = nn.GRU(self.hidden_size * self.idx, self.hidden_size * self.idx, self.n_layers, dropout=0.1)
 
