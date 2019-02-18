@@ -28,23 +28,23 @@ def thetar_handler(unused_addr, args, ch1, ch2, ch3, ch4):
     pass
 def alphaa_handler(unused_addr, args, ch1, ch2, ch3, ch4):
     alpha_absolute.append([ch1, ch2, ch3, ch4])
-    # print(unused_addr, ch1, ch2, ch3, ch4)
+    print(unused_addr, ch1, ch2, ch3, ch4)
     # pass
 def betaa_handler(unused_addr, args, ch1, ch2, ch3, ch4):
     beta_absolute.append([ch1, ch2, ch3, ch4])
-    # print(unused_addr, ch1, ch2, ch3, ch4)
+    print(unused_addr, ch1, ch2, ch3, ch4)
     # pass
 def deltaa_handler(unused_addr, args, ch1, ch2, ch3, ch4):
     delta_absolute.append([ch1, ch2, ch3, ch4])
-    # print(unused_addr, ch1, ch2, ch3, ch4)
+    print(unused_addr, ch1, ch2, ch3, ch4)
     # pass
 def gammaa_handler(unused_addr, args, ch1, ch2, ch3, ch4):
     gamma_absolute.append([ch1, ch2, ch3, ch4])
-    # print(unused_addr, ch1, ch2, ch3, ch4)
+    print(unused_addr, ch1, ch2, ch3, ch4)
     # pass
 def thetaa_handler(unused_addr, args, ch1, ch2, ch3, ch4):
     theta_absolute.append([ch1, ch2, ch3, ch4])
-    # print(unused_addr, ch1, ch2, ch3, ch4)
+    print(unused_addr, ch1, ch2, ch3, ch4)
     # pass
 
 def blink_handler(unused_addr, args, value):

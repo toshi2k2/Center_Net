@@ -85,7 +85,7 @@ def _train(opt, net, criterion, dataloader, testloader, N=2400):
                     # print(outputs.shape, output)
                     # _, predicted = torch.max(outputs.data, 1)
                     predicted = torch.argmax(outputs, dim=1)
-                    print("predicted :", predicted.cpu().detach().numpy().shape[0])
+                    # print("predicted :", predicted.cpu().detach().numpy().shape[0])
                     if epoch % 2 == 0:
                         pass
                         # print("labels: ", labels, "outputs: ", outputs, "predicted: ", predicted)
@@ -94,7 +94,7 @@ def _train(opt, net, criterion, dataloader, testloader, N=2400):
                     total += labels.size(0)
                     correct += (predicted.float() == labels.float()).sum()
 
-                print('Accuracy of the network on the train images: %d %%' % (100 * correct / total))
+                # print('Accuracy of the network on the train images: %d %%' % (100 * correct / total))
 
                 # ##printing test statistics:
                 # # Test the Model
@@ -106,6 +106,7 @@ def _train(opt, net, criterion, dataloader, testloader, N=2400):
                     images = Variable(images)  # .view(-1, 28*28))
                     outputs = net(images)
                     _, predicted = torch.max(outputs.data, 1)
+
                     # labels = torch.max(labels.float(), 1)[1]
                     ##    predicted = torch.round(outputs.data).view(-1).long()
                     total += labels.size(0)

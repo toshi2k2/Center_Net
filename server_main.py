@@ -33,9 +33,9 @@ def main():
     # parser.add_argument('--dataroot', required=False, help='path to dataset', default='./data/data.csv')
     parser.add_argument('--workers', type=int, help='number of data loading workers', default=6)
     # parser.add_argument('--batchSize', type=int, default=32, help='input batch size')
-    parser.add_argument('--len', type=int, default=256, help='the height / width of the input to network')
+    parser.add_argument('--len', type=int, default=64, help='the height / width of the input to network')
     # parser.add_argument('--saveInt', type=int, default=14, help='number of epochs between checkpoints')
-    parser.add_argument('--cuda', action='store_true', help='enables cuda')
+    parser.add_argument('--cuda', action='store_true', help='enables cuda', default=True)
     # parser.add_argument('--outf', default='output', help='folder to output images and model checkpoints')
     parser.add_argument('--manualSeed', type=int, help='manual seed')
     parser.add_argument('--net', help="path to net (to continue training)", default='./net_epoch_196.pth')
@@ -78,7 +78,7 @@ def main():
         data = conn.recv(16184)
         if not data:
             break
-        test_x = pickle.load(data)
+        test_x = np.fromstring(data, dtype=np.float).reshape(20, -1)
         test_x = torch.Tensor(test_x)
         print("test data: ", type(test_x), test_x.shape)
 
@@ -117,7 +117,7 @@ def main():
 
         # ratio = _test(opt=opt, net=net, testloader=testloader)
 
-        conn.send(outputs[predicted])
+        conn.send(outputs[1].encode())
     conn.close()
 
     #######################################################################################################################
